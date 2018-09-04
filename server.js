@@ -10,8 +10,12 @@ console.log('Hello Noteful!');
 const express = require('express');
 const app = express();
 
+app.use(express.static('public'));
+
 app.get('/api/notes', (req, res) => {
-    res.json(data);
+    const searchTerm = req.query.searchTerm;
+    const result = searchTerm ? data.filter(note => note.title.includes(searchTerm)) : data;
+    res.json(result);
 });
 
 app.get('/api/notes/:id', (req, res) => {
