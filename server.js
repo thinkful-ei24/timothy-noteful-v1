@@ -3,6 +3,8 @@ const { PORT } = require('./config');
 
 // Load array of notes
 const data = require('./db/notes');
+const simDB = require('./db/simDB');
+const notes = simDB.initialize(data);
 
 console.log('Hello Noteful!');
 
@@ -16,18 +18,16 @@ app.use(express.static('public'));
 app.use(logger);
 
 app.get('/api/notes', (req, res) => {
-    const searchTerm = req.query.searchTerm;
-    const result = searchTerm ? data.filter(note => note.title.includes(searchTerm)) : data;
-    res.json(result);
+    const { searchTerm } = req.query;
+    notes.filter(searchTerm, (err, list) => {
+        if(err) return next(err);
+        res.json(list);
+    });
 });
 
 app.get('/api/notes/:id', (req, res) => {
     res.json(data.find(note => note.id === Number(req.params.id)));
 });
-
-app.get('/boom', (req, res, next) => {
-    throw new Error('Boom!!');
-  });
 
 app.use(function(req, res, next){
     const err = new Error('Not found');
