@@ -14,8 +14,10 @@ const express = require('express');
 const { logger } = require('./middleware/logger');
 const app = express();
 
-app.use(express.static('public'));
 app.use(logger);
+app.use(express.static('public'));
+app.use(express.json());
+
 
 app.get('/api/notes', (req, res) => {
     const { searchTerm } = req.query;
@@ -31,6 +33,23 @@ app.get('/api/notes/:id', (req, res) => {
         if(err) return next(err);
         res.json(note);
     });
+});
+
+app.put('/api/notes/:id', (req, res) => {
+    const id = req.params.id;
+    const updateObj = {};
+    const updateFields = ['title', 'content'];
+
+    updateFields.forEach(field => {
+        if(field in req.body) updateObj[field] = req.body[field]
+    });
+
+    notes.update(id, updateObj, (err, note) => {
+        if(err) next(err);
+        if(note) res.json(note);
+        else next();
+    });
+
 });
 
 app.use(function(req, res, next){
