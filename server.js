@@ -9,9 +9,11 @@ console.log('Hello Noteful!');
 // INSERT EXPRESS APP CODE HERE...
 
 const express = require('express');
+const { logger } = require('./middleware/logger');
 const app = express();
 
 app.use(express.static('public'));
+app.use(logger);
 
 app.get('/api/notes', (req, res) => {
     const searchTerm = req.query.searchTerm;
