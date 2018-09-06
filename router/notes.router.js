@@ -40,4 +40,23 @@ notesRouter.put('/notes/:id', (req, res) => {
 
 });
 
+notesRouter.post('/notes', (req, res) => {
+    const { title, content } = req.body;
+    const newItem = { title, content};
+    
+    if(!newItem.title){
+        const err = new Error('Missing `title` in request body');
+        err.status = 400;
+        return next(err);
+    }
+
+    notes.create(newItem, (err, note) => {
+        if(err) return next(err);
+
+        if(note) res.location(`http://${req.headers.host}/notes/${note.id}`).status(201).json(note);
+        else next();
+    });
+
+});
+
 module.exports = notesRouter;
