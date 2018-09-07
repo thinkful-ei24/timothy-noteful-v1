@@ -111,7 +111,17 @@ const noteful = (function () {
 
       } else {
 
-        api.create(noteObj, createResponse => {
+        api.create(noteObj)
+          .then(createResponse => {
+            store.currentNote = createResponse;
+            return api.search(store.currentSearchTerm);
+          })
+          .then(searchResponse => {
+            store.notes = searchResponse;
+            render();
+          });
+
+       /* api.create(noteObj, createResponse => {
           store.currentNote = createResponse;
 
           api.search(store.currentSearchTerm, searchResponse => {
@@ -119,8 +129,8 @@ const noteful = (function () {
             render();
           });
 
-        });
-      }
+        }); */
+      } 
 
     });
   }

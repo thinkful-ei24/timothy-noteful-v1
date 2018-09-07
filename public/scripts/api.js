@@ -36,7 +36,17 @@ const api = {
       url: `/api/notes/${id}`,
       dataType: 'json'
     });
-
+  },
+  
+  create: function(obj){
+    return $.ajax({
+      type: 'POST',
+      url: '/api/notes',
+      dataType: 'json',
+      contentType: 'application/json',
+      processData: false,
+      data: JSON.stringify(obj)
+    });
   }
 
 };
