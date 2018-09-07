@@ -7,20 +7,32 @@ const simDB = require('../db/simDB');
 const notes = simDB.initialize(data);
 
 
-notesRouter.get('/notes', (req, res) => {
+notesRouter.get('/notes', (req, res, next) => {
     const { searchTerm } = req.query;
-    notes.filter(searchTerm, (err, list) => {
+    
+    notes.filter(searchTerm)
+        .then(list => res.json(list))
+        .catch(err => next(err));
+
+    /*notes.filter(searchTerm, (err, list) => {
         if(err) return next(err);
         res.json(list);
     });
+    */
 });
 
-notesRouter.get('/notes/:id', (req, res) => {
-    const { id } = req.params;
+notesRouter.get('/notes/:id', (req, res, next) => {
+    const id = req.params.id;
+    notes.find(id)
+        .then(note => res.json(note))
+        .catch(err => next(err));
+    
+    /*
     notes.find(id, (err, note) => {
         if(err) return next(err);
         res.json(note);
     });
+    */
 });
 
 notesRouter.put('/notes/:id', (req, res) => {
